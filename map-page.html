@@ -1,0 +1,173 @@
+<html>
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.37.0/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body { margin:0; padding:0; }
+        #map { position:absolute; top:0; bottom:0; width:100%; }
+    </style>
+</head>
+<body>
+
+<style>
+#map {
+    position: fixed;
+    width:50%;
+}
+#features {
+    width: 50%;
+    margin-left: 50%;
+    font-family: sans-serif;
+    overflow-y: scroll;
+    background-color: #fafafa;
+}
+section {
+    padding:  25px 50px;
+    line-height: 25px;
+    border-bottom: 1px solid #ddd;
+    opacity: 0.25;
+    font-size: 13px;
+}
+section.active {
+    opacity: 1;
+}
+section:last-child {
+    border-bottom: none;
+    margin-bottom: 200px;
+}
+</style>
+
+<div id='map'></div>
+<div id='features'>
+    <section id='bentleypark' class='active'>
+        <h2>Bentley Park</h2>
+        <h3>Community Centre</h3>
+        <p>This is the heartbeat of the Street’s Movement Organisation.  The epicentre of the the positive influence of the community. From here we have been able to reach 13000 people through a range of programs which include boxing, youth work, women fitness classes and more! We have also had programs that involve food banks and creation of music through a music studio which allows a space for people to work on their projects and allowed them to build confidence. Further, often mentors help the community too, including a recent program where volunteers from JCU were helping with mentoring programs for more than a year.</p>
+    </section>
+    <section id='moorroobool'>
+      <h2>Moorroobool</h2>
+      <h3>Community Outreach Program</h3>
+      <p>A community program where we would train twice a week (boxing and other fitness programs) for a wide variety of audiences. The programs are aimed at youth but open to all ages as it helps build resillience and self- desicipline. They also organise community sporting events which gives an opportunity to those participating a chance to build team-work and controlled discipline.</p>
+    </section>
+    <section id='edmonton'>
+      <h2>Edmonton</h2>
+      <h3>Community Outreach Program</h3>
+      <p>A popup gym built by volunteers for people who couldn’t afford a gym. It is through the support of the local community that would give the opportunity to people to have the access to fitness and community support.</p>
+    </section>
+    <section id='yarrabah'>
+      <h2>Yarrabah</h2>
+      <h3>Local Aboriginal Community Support Program</h3>
+      <p>The town of Yarrabah is 30 mins away from Cairns where help was sought from the community members for their youth. Street’s Movement listened and is now helping the local aboriginal youth with fitness and community support.</p>
+    </section>
+    <section id='cairns'>
+      <h2>Cairns and surrounding areas</h2>
+      <h3>Local School outreach programs</h3>
+      <p>Kurranda<br>
+        Yarrabah Aboriginal Community<br>
+        Bentley Park College<br>
+        Gordonvale<br>
+        Cairns High - North Cairns<br>
+        Woree High + Public<br>
+        Trinity Bay - WestCourt<br>
+        Smithfield High - Smithfield<br>
+        Babinda - 45 mins from Cairns<br><br>
+
+        Education is a key for Street’s Movement. They want to help and support student’s with truancy, academic, confidence and behavioural issues. Depending on the school needs, they provide mentorship and assist with transition into becoming responsible students. In addition, sports and fitness is a big part of the support Street’s Movement offers the local schools.</p>
+    </section>
+    <section id='prison'>
+      <h2>Lotus Glenn (Men’s Prison)</h2>
+      <h3>Reintegration and Support Program</h3>
+      <p>Weekly rehabilitation programs for assisting the men struggling with the law and the correctional institutions and helping them with skills as they come back to the community.</p>
+    </section>
+</div>
+<script>
+mapboxgl.accessToken = 'pk.eyJ1IjoiY29kZWZvcmdvb2QiLCJhIjoiY2oyeGUxY25iMDE0cjM4cHV5ZmNvMmRsayJ9.jtRws6AQBgCLBHQ0OF78PQ';
+
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v9',
+    center: [145.741, -17.0092],
+    zoom: 15.5,
+    bearing: 27,
+    pitch: 45
+});
+
+var chapters = {
+    'bentleypark': {
+        bearing: 27,
+        center: [145.741, -17.0092],
+        zoom: 15.5,
+        pitch: 20
+    },
+    'moorroobool': {
+        duration: 6000,
+        center: [145.7351, -16.9355],
+        bearing: 150,
+        zoom: 15,
+        pitch: 0
+    },
+    'edmonton': {
+        bearing: 90,
+        center: [145.7454, -17.0175],
+        zoom: 13,
+        speed: 0.6,
+        pitch: 40
+    },
+    'yarrabah': {
+        bearing: 90,
+        center: [145.8662, -16.9062],
+        zoom: 12.3
+    },
+    'cairns': {
+        bearing: 45,
+        center: [145.638795, -16.818465],
+        zoom: 15.3,
+        pitch: 20,
+        speed: 0.8
+    },
+    'prison': {
+        bearing: 45,
+        center: [145.362173, -17.112425],
+        zoom: 15.3,
+        pitch: 20,
+        speed: 0.8
+    }
+};
+
+// On every scroll event, check which element is on screen
+window.onscroll = function() {
+    var chapterNames = Object.keys(chapters);
+    for (var i = 0; i < chapterNames.length; i++) {
+        var chapterName = chapterNames[i];
+        if (isElementOnScreen(chapterName)) {
+            setActiveChapter(chapterName);
+            break;
+        }
+    }
+};
+
+var activeChapterName = 'baker';
+function setActiveChapter(chapterName) {
+    if (chapterName === activeChapterName) return;
+
+    map.flyTo(chapters[chapterName]);
+
+    document.getElementById(chapterName).setAttribute('class', 'active');
+    document.getElementById(activeChapterName).setAttribute('class', '');
+
+    activeChapterName = chapterName;
+}
+
+function isElementOnScreen(id) {
+    var element = document.getElementById(id);
+    var bounds = element.getBoundingClientRect();
+    return bounds.top < window.innerHeight && bounds.bottom > 0;
+}
+
+</script>
+
+</body>
+</html>
